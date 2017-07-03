@@ -1,0 +1,48 @@
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<script src="js/jquery.js"></script>
+	<script src="js/es6.js"></script>
+	<script src="js/ie_eventlistner_polyfill.js"></script>
+	<script src="js/cadesplugin_api.js"></script>
+	<script src="js/code.js"></script>
+</head>
+<body>
+<table>
+	<tr>
+		<td align="right" valign="top" width="40%" class="adm-detail-content-cell-l"><img id="PluginEnabledImg"></td>
+		<td width="60%" valign="top" class="adm-detail-content-cell-r"><span id="PluginEnabledTxt"></span></td>
+	</tr>
+	<tr>
+		<td align="right" valign="top" width="40%" class="adm-detail-content-cell-l">Выберите сертификат:</td>
+		<td width="60%" valign="top" class="adm-detail-content-cell-r">
+			<select size="4" name="CertListBox" id="CertListBox" style="width:300px;resize:none;border:0;"></select>
+			<input type="hidden" name="cert" value="">
+		</td>
+	</tr>
+	<tr>
+		<td align="right" valign="top" width="40%" class="adm-detail-content-cell-l">Data in Base64:</td>
+		<td width="60%" valign="top" class="adm-detail-content-cell-r">
+			<input type="text" name="data" value="dGVzdA==">
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<input type="submit" name="confirmsign" value="Подписать"/>
+		</td>
+	</tr>
+	<tr>
+		<td align="right" valign="top" width="40%" class="adm-detail-content-cell-l">Hash:</td>
+		<td width="60%" valign="top" class="adm-detail-content-cell-r">
+			<input type="text" name="hash" value="">
+		</td>
+	</tr>
+	<tr>
+		<td align="right" valign="top" width="40%" class="adm-detail-content-cell-l">Sign:</td>
+		<td width="60%" valign="top" class="adm-detail-content-cell-r">
+			<input type="text" name="signed" value="">
+		</td>
+	</tr>
+</table>
+</body>
+</html>
