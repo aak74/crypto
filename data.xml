@@ -1,8 +1,11 @@
 <example>
-    <lastname>
-      Kopylov
-    </lastname>
-    <firstname>
-      Andrew
-    </firstname>
+  <firstname>
+    Andrew
+  </firstname>
+  <lastname>
+    Kopylov
+  </lastname>
+  <city>
+    Yaroslavl
+  </city>
 </example>

@@ -69,8 +69,8 @@ var app = function() {
       $.post("/updateSignature.php", {data: signHash})
         .done(function(response) {
           console.log('updateSignature response', response);
-          // $('#hash').text(response);
           resolve(response);
+          $('#link-to-file').removeClass('hidden');
         })
         .fail(function(error) {
           console.error('updateSignature error', error);
@@ -106,7 +106,7 @@ var app = function() {
       }
       getHash().then(function(hash) {
         console.log('sign hash', certSubject, hash);
-        cryptoPro.signCreate(certSubject, hash).then(function(signHash) {
+        cryptoPro.signHash(certSubject, hash).then(function(signHash) {
           console.log('sign hash', signHash);
           $(signedSelector).text(signHash);
           updateSignature(signHash);

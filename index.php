@@ -68,6 +68,7 @@
 			</div>
 		</div>
 	</div>
+	<a id="link-to-file" class="hidden" href="/data.xml.sig">Скачать подписанный хэш</a>
 	<script src="js/cryptopro.js"></script>
 	<script src="js/app.js"></script>
 </body>

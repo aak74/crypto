@@ -1,5 +1,7 @@
 <?
+
 // echo base64_encode(file_get_contents('data.xml'));
+// // echo base64_encode('Hello World');
 // return;
 require_once('CryptoPro.php');
 $cryptopro = new CryptoPro;

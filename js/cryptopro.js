@@ -5,6 +5,7 @@
 CryptoPro = function(options) {
 
     this.window = window;
+    this.signType = 'data';
 
     // вы можете использовать любой другой plugin для реализации Promise
     this.q = Promise;
@@ -35,6 +36,16 @@ CryptoPro = function(options) {
                 console.log(result);
                 return result;
             });
+    }
+
+    this.signData = function(cert, data) {
+        this.signType = 'data';
+        return this.signCreate(cert, data);
+    }
+
+    this.signHash = function(cert, data) {
+        this.signType = 'hash';
+        return this.signCreate(cert, data);
     }
 
     /**
@@ -79,19 +90,39 @@ CryptoPro = function(options) {
                     })
                     .then(function(oSignedData){
                         self.oSignedData = oSignedData;
-                        return self.oSignedData.propset_ContentEncoding(self.cadesplugin.CADESCOM_BASE64_TO_BINARY);
                     })
                     .then(function(){
-                        return self.oSignedData.propset_Content(data);
-                    })
-                    .then(function(){
-                        return self.oSignedData.SignCades(self.oSigner, self.cadesplugin.CADESCOM_CADES_BES)
+                      console.log('this.signType', self.signType);
+                        if (self.signType == 'hash') {
+                            self.oSigner.Certificate = cert;
+                            console.log('this.signType == hash', cert, self.oSigner);
+                            return self.cadesplugin.CreateObjectAsync("CAdESCOM.HashedData")
+                                .then(function(oHashedData){
+                        		        oHashedData.propset_Algorithm(100)
+                        		        oHashedData.propset_DataEncoding(1);
+                                    oHashedData.Hash(data);
+                                    console.log('this.signType == hash 5', oHashedData);
+                                    return self.oSignedData.SignHash(oHashedData, self.oSigner, 1)
+                                });
+                        } else {
+                            return self.oSignedData.propset_ContentEncoding(self.cadesplugin.CADESCOM_BASE64_TO_BINARY)
+                                .then(function(){
+                                    return self.oSignedData.propset_Content(data);
+                                })
+                                .then(function(){
+                                    console.log('this.signType == data');
+                                    return self.oSignedData.SignCades(self.oSigner, self.cadesplugin.CADESCOM_CADES_BES)
+                                });
+                        }
                     })
                     .then(function(signature){
-                        console.log(signature);
+                        console.log('signature', signature);
                         self.oStore.Close();
                         return signature;
                     })
+                    .catch(function() {
+                          console.error('sign error');
+                    });
             });
     };
 
@@ -227,16 +258,6 @@ CryptoPro = function(options) {
       		    }
       		}, oCert, data, resolve, reject);
       	});
-    }
-
-    this.getHash2 = function(data) {
-      return new Promise(function(resolve, reject) {
-        Hash_Async(oCert, data).then(function(result) {
-          resolve(result);
-        }).catch(function(error) {
-          reject(error);
-        })
-      });
     }
 
     this.load();
