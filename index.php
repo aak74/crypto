@@ -28,11 +28,18 @@
 		</div>
 		<div class="row clearfix">
 			<div class="name">
-				Data in Base64:
+				Hash server:
 			</div>
 			<div class="value">
-				<textarea id="hash" rows="4" cols="40">
-				</textarea>
+				<textarea id="hash" rows="1" cols="80"></textarea>
+			</div>
+		</div>
+		<div class="row clearfix">
+			<div class="name">
+				Hash client:
+			</div>
+			<div class="value">
+				<textarea id="hash-js" rows="1" cols="80"></textarea>
 			</div>
 		</div>
 		<div class="row clearfix">
@@ -44,10 +51,11 @@
 		</div>
 		<div class="row clearfix">
 			<div class="name">
-				Hash:
+				Base64:
 			</div>
 			<div class="value">
-				<input type="text" name="hash" value="">
+				<textarea id="base64" rows="10" cols="80">
+				</textarea>
 			</div>
 		</div>
 		<div class="row clearfix">
@@ -55,7 +63,7 @@
 				Sign:
 			</div>
 			<div class="value">
-				<textarea id="signed" rows="4" cols="40">
+				<textarea id="signed" rows="30" cols="80">
 				</textarea>
 			</div>
 		</div>

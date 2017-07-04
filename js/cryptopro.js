@@ -1,3 +1,7 @@
+/**
+ * Originally from: https://github.com/krecu/cryptopro-async-plugin
+ */
+
 CryptoPro = function(options) {
 
     this.window = window;
@@ -204,6 +208,36 @@ CryptoPro = function(options) {
                     });
             });
     };
+
+    this.getHash = function(data) {
+
+        var self = this;
+        var oCert = '';
+        return new Promise(function(resolve, reject){
+      		cadesplugin.async_spawn(function *(args) {
+      		    try {
+      		        var oHashedData = yield cadesplugin.CreateObjectAsync("CAdESCOM.HashedData");
+      		        yield oHashedData.propset_Algorithm(100);
+      		        yield oHashedData.propset_DataEncoding(1);
+      		        yield oHashedData.Hash(data);
+  				        var sHashValue = yield oHashedData.Value;
+      		        args[2](sHashValue);
+      		    } catch (err) {
+      		        args[3]("Failed to create signature. Error: " + GetErrorMessage(err));
+      		    }
+      		}, oCert, data, resolve, reject);
+      	});
+    }
+
+    this.getHash2 = function(data) {
+      return new Promise(function(resolve, reject) {
+        Hash_Async(oCert, data).then(function(result) {
+          resolve(result);
+        }).catch(function(error) {
+          reject(error);
+        })
+      });
+    }
 
     this.load();
 };

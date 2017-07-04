@@ -2,6 +2,8 @@ var app = function() {
 
   var certListSelector = '#CertListBox';
   var hashSelector = '#hash';
+  var hashJsSelector = '#hash-js';
+  var base64Selector = '#base64';
   var signedSelector = '#signed';
   var getCerts = function() {
     /**
@@ -45,6 +47,23 @@ var app = function() {
     });
   }
 
+  var getHashClient = function() {
+    return new Promise(function(resolve, reject) {
+      $.get("/getBase64.php")
+        .done(function(response) {
+          console.log('getBase64 response', response);
+          $(base64Selector).text(response);
+          cryptoPro.getHash(response).then(function(hash) {
+            resolve(hash);
+          });
+        })
+        .fail(function(error) {
+          console.error('getHashClient error', error);
+          reject(error);
+        });
+    });
+  }
+
   var updateSignature = function(signHash) {
     return new Promise(function(resolve, reject) {
       $.post("/updateSignature.php", {data: signHash})
@@ -64,9 +83,18 @@ var app = function() {
     console.log('init');
     $('#get-hash').click(function() {
       console.log('get hash clicked');
+
       getHash().then(function(hash) {
         console.log('hash', hash);
         $(hashSelector).text(hash);
+      });
+
+      getHashClient().then(function(hash) {
+        console.log('hash-js', hash);
+        $(hashJsSelector).text(hash);
+      }).catch(function (error) {
+        console.log('getHashClient catch', error);
+        $(hashJsSelector).text('ERROR');
       });
     });
 
