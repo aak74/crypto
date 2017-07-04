@@ -20,6 +20,7 @@ function include_async_code()
 }
 
 function Common_CheckForPlugIn(id) {
+	console.log('Common_CheckForPlugIn', id, !!cadesplugin.CreateObjectAsync);
 	var canAsync = !!cadesplugin.CreateObjectAsync;
 	if(canAsync)
 	{
@@ -36,6 +37,7 @@ function Common_CheckForPlugIn(id) {
 //---
 function Common_GetCertificate(id, cb)
 {
+	console.log('Common_GetCertificate', arguments, !!cadesplugin.CreateObjectAsync);
 	var canAsync = !!cadesplugin.CreateObjectAsync;
 	if(canAsync)
 	{
@@ -59,6 +61,7 @@ function Common_GetCertificate(id, cb)
 
 function Common_SignHash(oCert, hash, cb)
 {
+	console.log('Common_SignHash', oCert, hash, cb);
 	var canAsync = !!cadesplugin.CreateObjectAsync;
 	if(canAsync)
 	{
@@ -133,7 +136,7 @@ function GetCertificate_NPAPI(certListBoxId) {
 
 function SignHash_NPAPI(oCert, hash) {
 	var oHashedData = cadesplugin.CreateObject("CAdESCOM.HashedData");
-	oHashedData.Algorithm = 100; 
+	oHashedData.Algorithm = 100;
 	oHashedData.SetHashValue(hash);
 
 	var oSigner = cadesplugin.CreateObject("CAdESCOM.CPSigner");
@@ -150,7 +153,7 @@ function SignHash_NPAPI(oCert, hash) {
 
 function Hash_NPAPI(oCert, data) {
 	var oHashedData = cadesplugin.CreateObject("CAdESCOM.HashedData");
-	oHashedData.Algorithm = 100; 
+	oHashedData.Algorithm = 100;
 	oHashedData.DataEncoding = 1;
 	oHashedData.Hash(data);
 	var sHashValue = oHashedData.Value;
@@ -246,7 +249,7 @@ function CheckForPlugIn_NPAPI(id) {
 			}
 		});
     }
-    
+
     var isPluginLoaded = false;
     var isPluginWorked = false;
     var isActualVersion = false;
@@ -266,7 +269,7 @@ function CheckForPlugIn_NPAPI(id) {
 //        ShowCSPVersion_NPAPI(CurrentPluginVersion);
     }
     catch (err) {
-        // Объект создать не удалось, проверим, установлен ли 
+        // Объект создать не удалось, проверим, установлен ли
         // вообще плагин. Такая возможность есть не во всех браузерах
         var mimetype = navigator.mimeTypes["application/x-cades"];
         if (mimetype) {
@@ -340,7 +343,7 @@ function FillCertList_NPAPI(lstId) {
             return;
         }
     }
-   
+
     for (var i = 1; i <= certCnt; i++) {
         var cert;
         try {
@@ -431,15 +434,17 @@ else
 }
 
 function init() {
+	console.log('init code.js');
 	Common_CheckForPlugIn('CertListBox');
 	$(document).on('click', 'button[name=confirmsign],input[name=confirmsign]', function(e){
+		console.log('confirmsign');
 		e.preventDefault();
 		Common_GetCertificate('CertListBox', GetCertificate_Result);
 	});
 }
 
 function GetCertificate_Result(oCert, sCert) {
-//	console.log('Got cert:');
+	console.log('Got cert:', oCert, sCert);
 //	console.log(sCert);
 	if (typeof(oCert) != 'undefined')
 	{
@@ -457,4 +462,3 @@ function GetHash_Result(oCert, hash) {
 function GetSign_Result(signed) {
 	$('input[name=signed]').val(signed);
 }
-
