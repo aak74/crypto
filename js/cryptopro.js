@@ -6,6 +6,7 @@ CryptoPro = function(options) {
 
     this.window = window;
     this.signType = 'data';
+    this.tspService = 'http://testca.cryptopro.ru/tsp/tsp.srf';
 
     // вы можете использовать любой другой plugin для реализации Promise
     this.q = Promise;
@@ -22,6 +23,15 @@ CryptoPro = function(options) {
         this.oSigner = null;
         this.oSignedData = null;
     };
+
+    this.convertDate = function(date) {
+        switch (navigator.appName) {
+            case "Microsoft Internet Explorer":
+                return date.getVarDate();
+            default:
+                return date;
+        }
+    }
 
     this.verify = function(sSignedMessage, oHashedData) {
 
@@ -71,6 +81,13 @@ CryptoPro = function(options) {
           })
     }
 
+    this.setTSA = function(data) {
+      return this.oSigner.propset_TSAAddress(this.tspService)
+      .then(function() {
+        return;
+      });
+    }
+
     this.signHashAsync = function(hash) {
         var self = this;
         return this.cadesplugin.CreateObjectAsync("CAdESCOM.HashedData")
@@ -78,7 +95,9 @@ CryptoPro = function(options) {
                 oHashedData.propset_Algorithm(100)
                 oHashedData.propset_DataEncoding(1);
                 oHashedData.SetHashValue(hash);
-                return self.oSignedData.SignHash(oHashedData, self.oSigner, 1);
+                return self.setTSA().then(function () {
+                    return self.oSignedData.SignHash(oHashedData, self.oSigner, self.cadesplugin.CADESCOM_CADES_X_LONG_TYPE_1);
+                });
             });
     }
 
@@ -89,7 +108,10 @@ CryptoPro = function(options) {
                 return self.oSignedData.propset_Content(data);
             })
             .then(function() {
-                return self.oSignedData.SignCades(self.oSigner, self.cadesplugin.CADESCOM_CADES_BES)
+                self.oSigner.Options = 1;
+                return self.setTSA().then(function () {
+                  return self.oSignedData.SignCades(self.oSigner, self.cadesplugin.CADESCOM_CADES_X_LONG_TYPE_1);
+                });
             });
     }
 
