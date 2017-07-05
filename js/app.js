@@ -106,6 +106,7 @@ var app = function() {
       }
       getHash().then(function(hash) {
         console.log('sign hash', certSubject, hash);
+        // cryptoPro.signData(certSubject, hash).then(function(signHash) {
         cryptoPro.signHash(certSubject, hash).then(function(signHash) {
           console.log('sign hash', signHash);
           $(signedSelector).text(signHash);

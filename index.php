@@ -1,74 +1,51 @@
-<html>
-<head>
-	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-	<link rel="stylesheet" href="css/app.css">
-	<script src="js/jquery.js"></script>
-	<script src="js/es6.js"></script>
-	<script src="js/ie_eventlistner_polyfill.js"></script>
-	<script src="js/cadesplugin_api.js"></script>
-</head>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>CryptoPro Example</title>
+		<link rel="stylesheet" href="css/bootstrap.min.css">
+		<link rel="stylesheet" href="css/app.css">
+  </head>
 <body>
-	<div class="content">
-		<img id="PluginEnabledImg">
-		<span id="PluginEnabledTxt"></span>
+  <div class="container-fluid">
 		<div class="row clearfix">
-			<div class="name">
-				Выберите сертификат:
-			</div>
-			<div class="value">
-				<select size="4" name="CertListBox" id="CertListBox" style="width:300px;resize:none;border:0;"></select>
-			</div>
+		  <div class="name">
+		    Выберите сертификат:
+		  </div>
+		  <div class="value">
+		    <select size="4" name="CertListBox" id="CertListBox" style="width:300px;resize:none;border:0;"></select>
+		  </div>
 		</div>
-		<div class="row clearfix">
-			<div class="name">&nbsp;
-			</div>
-			<div class="value">
-				<input type="button" id="get-hash" value="Получить хэш"/>
-			</div>
-		</div>
-		<div class="row clearfix">
-			<div class="name">
-				Hash server:
-			</div>
-			<div class="value">
-				<textarea id="hash" rows="1" cols="80"></textarea>
-			</div>
-		</div>
-		<div class="row clearfix">
-			<div class="name">
-				Hash client:
-			</div>
-			<div class="value">
-				<textarea id="hash-js" rows="1" cols="80"></textarea>
-			</div>
-		</div>
-		<div class="row clearfix">
-			<div class="name">&nbsp;
-			</div>
-			<div class="value">
-				<input type="button" id="sign" value="Подписать"/>
-			</div>
-		</div>
-		<div class="row clearfix">
-			<div class="name">
-				Base64:
-			</div>
-			<div class="value">
-				<textarea id="base64" rows="10" cols="80">
-				</textarea>
-			</div>
-		</div>
-		<div class="row clearfix">
-			<div class="name">
-				Sign:
-			</div>
-			<div class="value">
-				<textarea id="signed" rows="30" cols="80">
-				</textarea>
+		<div class="row">
+			<div class="col-md-12">
+				<div class="tabbable" id="tabs">
+					<ul class="nav nav-tabs">
+						<li class="active">
+							<a href="#panel-hash" data-toggle="tab">Hash</a>
+						</li>
+						<li>
+							<a href="#panel-file" data-toggle="tab">File</a>
+						</li>
+					</ul>
+					<div class="tab-content">
+						<div role="tabpanel" class="tab-pane active" id="panel-hash">
+							<?include('./pages/hash.php');?>
+						</div>
+						<div role="tabpanel" class="tab-pane" id="panel-file">
+							<?include('./pages/file.php');?>
+						</div>
+					</div>
+				</div>
 			</div>
 		</div>
 	</div>
-	<a id="link-to-file" class="hidden" href="/data.xml.sig">Скачать подписанный хэш</a>
+  <script src="js/jquery.min.js"></script>
+	<script src="js/bootstrap.min.js"></script>
+	<script src="js/es6.js"></script>
+	<script src="js/ie_eventlistner_polyfill.js"></script>
+	<script src="js/cadesplugin_api.js"></script>
 	<script src="js/cryptopro.js"></script>
 	<script src="js/app.js"></script>
 </body>

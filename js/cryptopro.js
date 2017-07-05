@@ -48,6 +48,28 @@ CryptoPro = function(options) {
         return this.signCreate(cert, data);
     }
 
+    this.getCert = function(cert) {
+      return self.cadesplugin.CreateObjectAsync("CAPICOM.Store")
+          .then(function(oStore){
+              self.oStore = oStore;
+              self.oStore.Open(self.cadesplugin.CAPICOM_CURRENT_USER_STORE, self.cadesplugin.CAPICOM_MY_STORE, self.cadesplugin.CAPICOM_STORE_OPEN_MAXIMUM_ALLOWED);
+              return self.oStore.Certificates;
+          })
+          .then(function(oCerts){
+              self.oCerts = oCerts;
+              return self.oCerts.Find(self.cadesplugin.CAPICOM_CERTIFICATE_FIND_SUBJECT_NAME, cert)
+                  .then(function(certs){
+                      self.oCerts = certs;
+                      return certs.Count;
+                  })
+                  .then(function(count){
+                      if (count < 1) {
+                          return self.q.reject('Сертификат не найден');
+                      }
+                      return self.oCerts.Item(1);
+                  });
+          })
+    }
     /**
      * Подписываем файл выбранным сертификатом
      * @param cert
@@ -55,31 +77,10 @@ CryptoPro = function(options) {
      * @returns {*}
      */
     this.signCreate = function(cert, data) {
-
         var self = this;
 
-        return self.cadesplugin.CreateObjectAsync("CAPICOM.Store")
-            .then(function(oStore){
-                self.oStore = oStore;
-                self.oStore.Open(self.cadesplugin.CAPICOM_CURRENT_USER_STORE, self.cadesplugin.CAPICOM_MY_STORE, self.cadesplugin.CAPICOM_STORE_OPEN_MAXIMUM_ALLOWED);
-                return self.oStore.Certificates;
-            })
-            .then(function(oCerts){
-                self.oCerts = oCerts;
-                return self.oCerts.Find(self.cadesplugin.CAPICOM_CERTIFICATE_FIND_SUBJECT_NAME, cert)
-                    .then(function(certs){
-                        self.oCerts = certs;
-                        return certs.Count;
-                    })
-                    .then(function(count){
-                        if (count < 1) {
-                            return self.q.reject('Сертификат не найден');
-                        }
-                        return self.oCerts.Item(1);
-                    });
-            })
+        return self.getCert(cert)
             .then(function(cert){
-
                 return self.cadesplugin.CreateObjectAsync('CAdESCOM.CPSigner')
                     .then(function(oSigner){
                         self.oSigner = oSigner;
@@ -94,7 +95,7 @@ CryptoPro = function(options) {
                     .then(function(){
                       console.log('this.signType', self.signType);
                         if (self.signType == 'hash') {
-                            self.oSigner.Certificate = cert;
+                            // self.oSigner.Certificate = cert;
                             console.log('this.signType == hash', cert, self.oSigner);
                             return self.cadesplugin.CreateObjectAsync("CAdESCOM.HashedData")
                                 .then(function(oHashedData){
