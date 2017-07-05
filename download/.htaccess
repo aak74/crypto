@@ -1,0 +1,4 @@
+<FilesMatch "\.(xml|sig|hsh)$">
+   ForceType application/octet-stream
+   Header set Content-Disposition attachment
+</FilesMatch>

@@ -10,14 +10,14 @@
   </head>
 <body>
   <div class="container-fluid">
-		<div class="row clearfix">
-		  <div class="name">
-		    Выберите сертификат:
-		  </div>
-		  <div class="value">
-		    <select size="4" name="CertListBox" id="CertListBox" style="width:300px;resize:none;border:0;"></select>
-		  </div>
-		</div>
+    <div class="form-group">
+      <label>Выберите сертификат:</label>
+      <select size="4" class="form-control" id="CertListBox"></select>
+    </div>
+    <div class="form-group">
+      <input type="button" id="get-hash" class="btn btn-primary" value="Получить хэш"/>
+      <input type="button" id="sign" class="btn btn-success" value="Подписать"/>
+    </div>
 		<div class="row">
 			<div class="col-md-12">
 				<div class="tabbable" id="tabs">

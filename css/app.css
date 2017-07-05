@@ -1,40 +1,4 @@
-.content .row {
-  width: 100%;
-}
 
-.content .row > div {
-  float: left;
-}
-
-.content .name {
-  width: 30%;
-}
-
-.content .value {
-  width: 70%;
-}
-
-.clearfix:before,
-.clearfix:after {
-    content: " "; /* 1 */
-    display: table; /* 2 */
-}
-
-.clearfix:after {
-    clear: both;
-}
-
-/**
- * For IE 6/7 only
- * Include this rule to trigger hasLayout and contain floats.
- */
-.clearfix {
-    *zoom: 1;
-}
-
-.hidden {
-  display: none;
-}
 /*
 .tab-content > .tab-pane {
     display: none;

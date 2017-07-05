@@ -1,49 +1,19 @@
-<div class="row clearfix">
-  <div class="name">&nbsp;
-  </div>
-  <div class="value">
-    <input type="button" id="get-hash" value="Получить хэш"/>
-  </div>
+<a class="hidden link-to-file" href="/./download/data.xml.sig">Скачать подписанный хэш</a>
+<div class="form-group">
+  <label>Hash from server:</label>
+  <input type="text" class="hash form-control" readonly>
 </div>
-<div class="row clearfix">
-  <div class="name">
-    Hash server:
-  </div>
-  <div class="value">
-    <textarea id="hash" rows="1" cols="80"></textarea>
-  </div>
+<div class="form-group">
+  <label>Hash from client:</label>
+  <input type="text" class="hash-js form-control" readonly>
 </div>
-<div class="row clearfix">
-  <div class="name">
-    Hash client:
-  </div>
-  <div class="value">
-    <textarea id="hash-js" rows="1" cols="80"></textarea>
-  </div>
+<div class="form-group">
+  <label>Base64:</label>
+  <textarea class="base64 form-control" rows="3" cols="80">
+  </textarea>
 </div>
-<div class="row clearfix">
-  <div class="name">&nbsp;
-  </div>
-  <div class="value">
-    <input type="button" id="sign" value="Подписать"/>
-  </div>
+<div class="form-group">
+  <label>Sign:</label>
+  <textarea class="signed form-control" rows="20" cols="80">
+  </textarea>
 </div>
-<div class="row clearfix">
-  <div class="name">
-    Base64:
-  </div>
-  <div class="value">
-    <textarea id="base64" rows="10" cols="80">
-    </textarea>
-  </div>
-</div>
-<div class="row clearfix">
-  <div class="name">
-    Sign:
-  </div>
-  <div class="value">
-    <textarea id="signed" rows="30" cols="80">
-    </textarea>
-  </div>
-</div>
-<a id="link-to-file" class="hidden" href="/data.xml.sig">Скачать подписанный хэш</a>

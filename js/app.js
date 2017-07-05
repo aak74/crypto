@@ -1,10 +1,11 @@
 var app = function() {
 
   var certListSelector = '#CertListBox';
-  var hashSelector = '#hash';
-  var hashJsSelector = '#hash-js';
-  var base64Selector = '#base64';
-  var signedSelector = '#signed';
+  var hashSelector = '.hash';
+  var hashJsSelector = '.hash-js';
+  var base64Selector = '.base64';
+  var signedSelector = '.signed';
+  var activeTabSelector = '.tab-pane.active ';
   var getCerts = function() {
     /**
      * получаем массив сертификатов в виде:
@@ -32,16 +33,22 @@ var app = function() {
     });
   }
 
+  var isHash = function() {
+    return $(activeTabSelector).attr('id') == 'panel-hash';
+  }
+
   var getHash = function() {
     return new Promise(function(resolve, reject) {
-      $.get("/getHash.php")
+      var url = isHash() ? '/getHash.php' : 'getBase64.php';
+      $.get(url)
         .done(function(response) {
           console.log('getHash response', response);
-          $('#hash').text(response);
+          $(activeTabSelector + hashSelector).text(response);
           resolve(response);
         })
         .fail(function(error) {
           console.error('getHash error', error);
+          $(activeTabSelector + hashSelector).text('ERROR');
           reject(error);
         });
     });
@@ -52,7 +59,7 @@ var app = function() {
       $.get("/getBase64.php")
         .done(function(response) {
           console.log('getBase64 response', response);
-          $(base64Selector).text(response);
+          $(activeTabSelector + base64Selector).text(response);
           cryptoPro.getHash(response).then(function(hash) {
             resolve(hash);
           });
@@ -70,7 +77,7 @@ var app = function() {
         .done(function(response) {
           console.log('updateSignature response', response);
           resolve(response);
-          $('#link-to-file').removeClass('hidden');
+          $(activeTabSelector + '.link-to-file').removeClass('hidden');
         })
         .fail(function(error) {
           console.error('updateSignature error', error);
@@ -80,21 +87,18 @@ var app = function() {
   }
 
   var init = function() {
-    console.log('init');
     $('#get-hash').click(function() {
-      console.log('get hash clicked');
-
       getHash().then(function(hash) {
-        console.log('hash', hash);
-        $(hashSelector).text(hash);
+        // console.log('hash', hash, $(hashSelector));
+        $(activeTabSelector + hashSelector).val(hash);
       });
 
       getHashClient().then(function(hash) {
         console.log('hash-js', hash);
-        $(hashJsSelector).text(hash);
+        $(activeTabSelector + hashJsSelector).val(hash);
       }).catch(function (error) {
-        console.log('getHashClient catch', error);
-        $(hashJsSelector).text('ERROR');
+        console.error('getHashClient catch', error);
+        $(activeTabSelector + hashJsSelector).val('ERROR');
       });
     });
 
@@ -105,13 +109,20 @@ var app = function() {
         return;
       }
       getHash().then(function(hash) {
-        console.log('sign hash', certSubject, hash);
+        console.log('sign hash', certSubject, hash, $(activeTabSelector).attr('id'));
         // cryptoPro.signData(certSubject, hash).then(function(signHash) {
-        cryptoPro.signHash(certSubject, hash).then(function(signHash) {
-          console.log('sign hash', signHash);
-          $(signedSelector).text(signHash);
-          updateSignature(signHash);
-        });
+        if (isHash()) {
+          cryptoPro.signHash(certSubject, hash).then(function(signature) {
+            $(activeTabSelector + signedSelector).text(signature);
+            updateSignature(signature);
+          });
+        } else {
+          cryptoPro.signData(certSubject, hash).then(function(signature) {
+            $(activeTabSelector + signedSelector).text(signature);
+            updateSignature(signature);
+          });
+        }
+
       });
     });
 
@@ -119,8 +130,6 @@ var app = function() {
   }
 
   return {
-    // getCerts: getCerts,
-    // getCertsList: getCertsList,
     init: init,
     sign: sign
   }

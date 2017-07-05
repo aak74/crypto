@@ -93,17 +93,17 @@ CryptoPro = function(options) {
                         self.oSignedData = oSignedData;
                     })
                     .then(function(){
-                      console.log('this.signType', self.signType);
                         if (self.signType == 'hash') {
                             // self.oSigner.Certificate = cert;
-                            console.log('this.signType == hash', cert, self.oSigner);
                             return self.cadesplugin.CreateObjectAsync("CAdESCOM.HashedData")
                                 .then(function(oHashedData){
                         		        oHashedData.propset_Algorithm(100)
                         		        oHashedData.propset_DataEncoding(1);
-                                    oHashedData.Hash(data);
-                                    console.log('this.signType == hash 5', oHashedData);
-                                    return self.oSignedData.SignHash(oHashedData, self.oSigner, 1)
+                                    return oHashedData.Hash(data)
+                                      .then(function(oHashedData2) {
+                                        console.log('oHashedData', oHashedData);
+                                        return self.oSignedData.SignHash(oHashedData, self.oSigner, 1);
+                                      });
                                 });
                         } else {
                             return self.oSignedData.propset_ContentEncoding(self.cadesplugin.CADESCOM_BASE64_TO_BINARY)
@@ -111,13 +111,12 @@ CryptoPro = function(options) {
                                     return self.oSignedData.propset_Content(data);
                                 })
                                 .then(function(){
-                                    console.log('this.signType == data');
                                     return self.oSignedData.SignCades(self.oSigner, self.cadesplugin.CADESCOM_CADES_BES)
                                 });
                         }
                     })
                     .then(function(signature){
-                        console.log('signature', signature);
+                        // console.log('signature', signature);
                         self.oStore.Close();
                         return signature;
                     })

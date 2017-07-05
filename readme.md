@@ -22,3 +22,11 @@
 - [проверяем работает ли сам плагин](https://www.cryptopro.ru/sites/default/files/products/cades/demopage/simple.html)
 - добавляем в `Настройки КриптоПро ЭЦП Browser Plug-in`(для Chrome: chrome-extension://iifchhfnnmpdbibifmljnfjhpififfog/trusted_sites.html) хосты: https://*.cryptopro.ru, http://localhost:8000
 - [проверка подписанного документа](https://www.gosuslugi.ru/pgu/eds/)
+
+## Описание работы
+
+### Хэширование
+
+Хэширование можно проверить с помощью утилиты [cpverify](https://www.cryptopro.ru/sites/default/files/public/cpverify/cpverify.exe). Есть версия для Linux.
+
+`cpverify ./data.xml -inverted_halfbytes 0`
