@@ -70,6 +70,29 @@ CryptoPro = function(options) {
                   });
           })
     }
+
+    this.signHashAsync = function(hash) {
+        var self = this;
+        return this.cadesplugin.CreateObjectAsync("CAdESCOM.HashedData")
+            .then(function(oHashedData){
+                oHashedData.propset_Algorithm(100)
+                oHashedData.propset_DataEncoding(1);
+                oHashedData.SetHashValue(hash);
+                return self.oSignedData.SignHash(oHashedData, self.oSigner, 1);
+            });
+    }
+
+    this.signDataAsync = function(data) {
+        var self = this;
+        return this.oSignedData.propset_ContentEncoding(self.cadesplugin.CADESCOM_BASE64_TO_BINARY)
+            .then(function() {
+                return self.oSignedData.propset_Content(data);
+            })
+            .then(function() {
+                return self.oSignedData.SignCades(self.oSigner, self.cadesplugin.CADESCOM_CADES_BES)
+            });
+    }
+
     /**
      * Подписываем файл выбранным сертификатом
      * @param cert
@@ -94,25 +117,9 @@ CryptoPro = function(options) {
                     })
                     .then(function(){
                         if (self.signType == 'hash') {
-                            // self.oSigner.Certificate = cert;
-                            return self.cadesplugin.CreateObjectAsync("CAdESCOM.HashedData")
-                                .then(function(oHashedData){
-                        		        oHashedData.propset_Algorithm(100)
-                        		        oHashedData.propset_DataEncoding(1);
-                                    return oHashedData.Hash(data)
-                                      .then(function(oHashedData2) {
-                                        console.log('oHashedData', oHashedData);
-                                        return self.oSignedData.SignHash(oHashedData, self.oSigner, 1);
-                                      });
-                                });
+                            return self.signHashAsync(data);
                         } else {
-                            return self.oSignedData.propset_ContentEncoding(self.cadesplugin.CADESCOM_BASE64_TO_BINARY)
-                                .then(function(){
-                                    return self.oSignedData.propset_Content(data);
-                                })
-                                .then(function(){
-                                    return self.oSignedData.SignCades(self.oSigner, self.cadesplugin.CADESCOM_CADES_BES)
-                                });
+                            return self.signDataAsync(data);
                         }
                     })
                     .then(function(signature){
