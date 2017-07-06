@@ -70,18 +70,16 @@ var app = function() {
   }
 
   var updateSignature = function(signHash, filename) {
-    return new Promise(function(resolve, reject) {
-      $.post("/updateSignature.php", {data: signHash, filename: filename})
-        .done(function(response) {
-          console.log('updateSignature response', response);
-          resolve(response);
-          $(activeTabSelector + '.link-to-file').removeClass('hidden');
-        })
-        .fail(function(error) {
-          console.error('updateSignature error', error);
-          reject(error);
-        });
-    });
+    $.post("/updateSignature.php", {data: signHash, filename: filename})
+      .done(function(response) {
+        console.log('updateSignature response', response);
+        // resolve(response);
+        $(activeTabSelector + '.link-to-file').removeClass('hidden');
+      })
+      .fail(function(error) {
+        console.error('updateSignature error', error);
+        // reject(error);
+      });
   }
 
   var post = function(url, params, signFilename, processData) {
@@ -92,14 +90,39 @@ var app = function() {
         reject('Выберите сертификат');
         return;
       }
+      $.post(url, params)
+        .done(function(response) {
+          console.log('submitted response', response);
+          try {
+            var result = JSON.parse(response);
+          } catch (e) {
+            reject('Ошибка парсинга ответа сервера');
+            return;
+          }
+          if (result.status !== 'ok') {
+            reject('Ошибка обработки файла на сервере');
+            return;
+          }
+          resolve(result.hash);
+        })
+        .fail(function(error) {
+          reject(error);
+        });
+    });
+  }
+
+
+  var postFile = function(url, params) {
+    return new Promise(function(resolve, reject) {
+      console.log('postFile', url, params);
       $.ajax(
         {
           url: url,
           type: 'POST',
           // dataType: 'json',
-          processData: processData,
-          // contentType: processData,
-          async: false,
+          processData: false,
+          contentType: false,
+          // async: false,
           data: params
         })
         .done(function(response) {
@@ -115,11 +138,7 @@ var app = function() {
             return;
           }
           var hash = result.hash;
-          cryptoPro.signHash(certSubject, hash).then(function(signature) {
-            // $(activeTabSelector + signedSelector).text(signature);
-            updateSignature(signature, signFilename);
-          });
-          resolve(response);
+          resolve(hash);
         })
         .fail(function(error) {
           reject(error);
@@ -127,17 +146,15 @@ var app = function() {
     });
   }
 
-  var sign = function(url, params, filename, processData) {
-    console.log('submitted', $(this).closest('form').serialize());
-    post(url, params, filename, processData)
-      .then(function() {
-        alert('Готово. Можете скачать файлы');
-        $(activeTabSelector + '.link-to-file').removeClass('hidden');
-        $(activeTabSelector + '.link-to-sign').removeClass('hidden');
+  var sign = function(certSubject, hash, signFilename) {
+    cryptoPro.signHash(certSubject, hash)
+      .then(function(signature) {
+        updateSignature(signature, signFilename);
       })
-      .catch(function(errorMsg) {
-        alert(errorMsg);
+      .catch(function(error) {
+        console.error('sign error', error);
       });
+    console.log('submitted', $(this).closest('form').serialize());
   }
 
   var getCert = function() {
@@ -183,16 +200,45 @@ var app = function() {
     });
 
     $('#submit').click(function() {
-      sign('postForm.php', {data: $(this).closest('form').serialize()}, './download/form-data.xml.sig', true);
+      var certSubject = getCert();
+      if (!certSubject) {
+        alert('Выберите сертификат');
+        return;
+      }
+      post('./postForm.php', {data: $(this).closest('form').serialize()})
+        .then(function(hash) {
+          alert('Готово. Можете скачать файлы');
+          $(activeTabSelector + '.link-to-file').removeClass('hidden');
+          $(activeTabSelector + '.link-to-sign').removeClass('hidden');
+          sign(certSubject, hash, './download/form-data.xml.sig');
+        })
+        .catch(function(errorMsg) {
+          alert(errorMsg);
+        });
+
     });
 
     $('#submit-file').click(function() {
+      var certSubject = getCert();
+      if (!certSubject) {
+        alert('Выберите сертификат');
+        return;
+      }
       var form = $(this).closest('form')[0];
-      var formData = new FormData();
-      formData.append('file', $(this).closest('form').find('#file-upload')[0]);
-      // var formData = new FormData($(form));
-      console.log('file', form, formData, $(this).closest('form').find('#file-upload')[0]);
-      sign('postFile.php', formData, './download/form-file.sig', false);
+      var formData = new FormData($(form).get(0));
+      // formData.append('file', form);
+      console.log('file', form, formData, $(form).get(0));
+      postFile('./postFile.php', formData)
+      // postFile('./postFile.php', {data: formData})
+        .then(function(hash) {
+          alert('Готово. Можете скачать файлы');
+          $(activeTabSelector + '.link-to-file').removeClass('hidden');
+          $(activeTabSelector + '.link-to-sign').removeClass('hidden');
+          sign(certSubject, hash, './download/form-file.in.sig');
+        })
+        .catch(function(errorMsg) {
+          alert(errorMsg);
+        });
     });
 
     getCerts();

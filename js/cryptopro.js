@@ -83,9 +83,12 @@ CryptoPro = function(options) {
 
     this.setTSA = function(data) {
       return this.oSigner.propset_TSAAddress(this.tspService)
-      .then(function() {
-        return;
-      });
+        .then(function() {
+          return;
+        })
+        .catch(function(error) {
+          console.error('setTSA error', error);
+        });
     }
 
     this.signHashAsync = function(hash) {
@@ -95,9 +98,23 @@ CryptoPro = function(options) {
                 oHashedData.propset_Algorithm(100)
                 oHashedData.propset_DataEncoding(1);
                 oHashedData.SetHashValue(hash);
-                return self.setTSA().then(function () {
-                    return self.oSignedData.SignHash(oHashedData, self.oSigner, self.cadesplugin.CADESCOM_CADES_X_LONG_TYPE_1);
-                });
+                return self.setTSA()
+                    .then(function () {
+                      console.log('signHashAsync setTSA', oHashedData);
+                        return self.oSignedData.SignHash(oHashedData, self.oSigner, self.cadesplugin.CADESCOM_CADES_X_LONG_TYPE_1)
+                            then(function(signature) {
+                              console.log('signHashAsync setTSA', oHashedData, signature);
+                              return signature;
+                            });
+                        // var signature =
+                        // return self.oSignedData.SignHash(oHashedData, self.oSigner, self.cadesplugin.CADESCOM_CADES_X_LONG_TYPE_1);
+                    })
+                    .catch(function(error) {
+                      console.error('signHashAsync setTSA error', error);
+                    });
+            })
+            .catch(function(error) {
+              console.error('signHashAsync error', error);
             });
     }
 
@@ -150,7 +167,7 @@ CryptoPro = function(options) {
                         return signature;
                     })
                     .catch(function() {
-                          console.error('sign error');
+                        console.error('cp sign error');
                     });
             });
     };

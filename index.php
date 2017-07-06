@@ -14,7 +14,7 @@
       <label>Выберите сертификат:</label>
       <select size="4" class="form-control" id="CertListBox"></select>
     </div>
-    <div class="form-group">
+    <div class="form-group hidden">
       <input type="button" id="get-hash" class="btn btn-primary" value="Получить хэш"/>
       <input type="button" id="sign" class="btn btn-success" value="Подписать"/>
     </div>
@@ -22,21 +22,21 @@
 			<div class="col-md-12">
 				<div class="tabbable" id="tabs">
 					<ul class="nav nav-tabs">
-						<li class="active">
+						<li class="hidden">
 							<a href="#panel-hash" data-toggle="tab">Hash</a>
 						</li>
-						<li>
+						<li class="hidden">
 							<a href="#panel-file" data-toggle="tab">File</a>
 						</li>
 						<li>
 							<a href="#panel-form" data-toggle="tab">Form</a>
 						</li>
-						<li>
+						<li class="active">
 							<a href="#panel-form-file" data-toggle="tab">Form File</a>
 						</li>
 					</ul>
 					<div class="tab-content">
-						<div role="tabpanel" class="tab-pane active" id="panel-hash">
+						<div role="tabpanel" class="tab-pane" id="panel-hash">
 							<?include('./pages/hash.php');?>
 						</div>
 						<div role="tabpanel" class="tab-pane" id="panel-file">
@@ -45,7 +45,7 @@
 						<div role="tabpanel" class="tab-pane" id="panel-form">
 							<?include('./pages/form.php');?>
 						</div>
-						<div role="tabpanel" class="tab-pane" id="panel-form-file">
+						<div role="tabpanel" class="tab-pane active" id="panel-form-file">
 							<?include('./pages/formFile.php');?>
 						</div>
 					</div>
