@@ -35,7 +35,6 @@ $.capicom.getCertificatesList = function() {
         // поиск всех действующих сертификатов (фильтр по дате)
         // доступные фильтры: http://msdn.microsoft.com/en-us/library/aa375642(v=vs.85).aspx
         var filteredCertificates = myStore.Certificates.Find($.capicom.CAPICOM_CERTIFICATE_FIND_TIME_VALID);
-        console.log('myStore', myStore, filteredCertificates);
         var result = [];
         for ( var i = 1; i <= filteredCertificates.Count; i++) {
             var cert = filteredCertificates.Item(i);
@@ -97,7 +96,7 @@ $.capicom.sign = function(rawData, detached, cert_hash) {
         var signedData = new ActiveXObject("CAPICOM.SignedData");
         // инициализация объекта CAPICOM.Utilities
         // http://msdn.microsoft.com/en-us/library/windows/desktop/aa388176(v=vs.85).aspx
-        var utils = new ActiveXObject("CAPICOM.Utilities");
+        // var utils = new ActiveXObject("CAPICOM.Utilities");
 
         // подписываемые данные
         // signedData.Content = $.capicom.getHash(rawData);

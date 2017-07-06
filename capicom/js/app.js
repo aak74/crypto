@@ -27,10 +27,8 @@ var app = function() {
   }
 
   var updateSignature = function(signed, filename) {
-    console.log('updateSignature', arguments);
     $.post("/updateSignature.php", {data: signed, filename: filename})
       .done(function(response) {
-        console.log('updateSignature response', response);
         $(activeTabSelector + '.link-to-file').removeClass('hidden');
       })
       .fail(function(error) {
@@ -39,8 +37,6 @@ var app = function() {
   }
 
   var sign = function() {
-    console.log('app sign');
-
     var certSubject = getCert();
     if (!certSubject) {
       alert('Выберите сертификат!');
@@ -58,24 +54,7 @@ var app = function() {
   }
 
   var init = function() {
-
-    $('#sign').click(function() {
-      console.log('#sign clicked');
-      var signature = sign();
-/*
-      return
-        .then(function(signature) {
-          console.log('#sign signature', signature);
-          updateSignature(signature, './download/capi-data.xml.sig');
-          return;
-        })
-        .catch(function(error) {
-          console.error('sign error');
-          return;
-        });
-*/
-    });
-
+    $('#sign').click(sign);
     getCerts();
   }
 
@@ -86,11 +65,5 @@ var app = function() {
 }();
 
 $(document).ready(function() {
-
-  // if (!cryptoPro.cadesplugin) {
-  //     alert('Плагин не загружен');
-  //     return;
-  // }
-  //
   app.init();
 });

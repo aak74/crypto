@@ -15,7 +15,6 @@
       <select size="4" class="form-control" id="CertListBox"></select>
     </div>
     <div class="form-group">
-      <input type="button" id="get-hash" class="btn btn-primary" value="Получить хэш"/>
       <input type="button" id="sign" class="btn btn-success" value="Подписать"/>
     </div>
 		<div class="row">

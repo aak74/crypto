@@ -4,7 +4,6 @@ var crypto = function() {
   }
 
   var sign = function(rawData, detached, cert_hash) {
-    // console.log('crypto sign', rawData, detached, cert_hash);
     return $.capicom.sign(rawData, detached, cert_hash);
   }
 
