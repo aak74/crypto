@@ -1,4 +1,4 @@
-<a class="hidden link-to-file" href="/./download/data.xml.sig">Скачать подписанный файл</a>
+<a class="hidden link-to-file" href="/download/data.xml.sig">Скачать подписанный файл</a>
 <div class="form-group">
   <label>Base64:</label>
   <input type="text" class="hash form-control" readonly>

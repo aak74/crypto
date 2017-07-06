@@ -1,4 +1,4 @@
-<a class="hidden link-to-file" href="/./download/data.xml.sig">Скачать подписанный хэш</a>
+<a class="hidden link-to-file" href="/download/data.xml.sig">Скачать подписанный хэш</a>
 <div class="form-group">
   <label>Hash from server:</label>
   <input type="text" class="hash form-control" readonly>

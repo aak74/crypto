@@ -21,11 +21,9 @@ var app = function() {
      * ]
      */
     cryptoPro.getCertsList().then(function(list) {
-      console.log('list', list);
         // формируем простой список для выбора сертификата
       var listCert = $(certListSelector).html('');
       for (var i in list) {
-        console.log('i', i, list[i]);
         listCert.append('<option value="' + list[i]._info['CN'] + '">' + list[i]._info['CN'] + ' (' + list[i]._date.toLocaleString("ru") + ')' + '</option>');
         // listCert.append('<option value="' + list[i]._id + '">CN: ' + list[i]._info['CN'] + '; Выдан: ' + list[i]._date.toLocaleString("ru") + '</option>');
 
@@ -71,9 +69,9 @@ var app = function() {
     });
   }
 
-  var updateSignature = function(signHash) {
+  var updateSignature = function(signHash, filename) {
     return new Promise(function(resolve, reject) {
-      $.post("/updateSignature.php", {data: signHash})
+      $.post("/updateSignature.php", {data: signHash, filename: filename})
         .done(function(response) {
           console.log('updateSignature response', response);
           resolve(response);
@@ -84,6 +82,66 @@ var app = function() {
           reject(error);
         });
     });
+  }
+
+  var post = function(url, params, signFilename, processData) {
+    return new Promise(function(resolve, reject) {
+      console.log('post', url, params, signFilename, processData);
+      var certSubject = getCert();
+      if (!certSubject) {
+        reject('Выберите сертификат');
+        return;
+      }
+      $.ajax(
+        {
+          url: url,
+          type: 'POST',
+          // dataType: 'json',
+          processData: processData,
+          // contentType: processData,
+          async: false,
+          data: params
+        })
+        .done(function(response) {
+          console.log('submitted response', response);
+          try {
+            var result = JSON.parse(response);
+          } catch (e) {
+            reject('Ошибка парсинга ответа сервера');
+            return;
+          }
+          if (result.status !== 'ok') {
+            reject('Ошибка обработки файла на сервере');
+            return;
+          }
+          var hash = result.hash;
+          cryptoPro.signHash(certSubject, hash).then(function(signature) {
+            // $(activeTabSelector + signedSelector).text(signature);
+            updateSignature(signature, signFilename);
+          });
+          resolve(response);
+        })
+        .fail(function(error) {
+          reject(error);
+        });
+    });
+  }
+
+  var sign = function(url, params, filename, processData) {
+    console.log('submitted', $(this).closest('form').serialize());
+    post(url, params, filename, processData)
+      .then(function() {
+        alert('Готово. Можете скачать файлы');
+        $(activeTabSelector + '.link-to-file').removeClass('hidden');
+        $(activeTabSelector + '.link-to-sign').removeClass('hidden');
+      })
+      .catch(function(errorMsg) {
+        alert(errorMsg);
+      });
+  }
+
+  var getCert = function() {
+    return $(certListSelector).val();
   }
 
   var init = function() {
@@ -103,27 +161,38 @@ var app = function() {
     });
 
     $('#sign').click(function() {
-      var certSubject = $(certListSelector).val();
+      var certSubject = getCert();
       if (!certSubject) {
         alert('Выберите сертификат!');
-        return;
+        return false;
       }
       getHash().then(function(hash) {
-        console.log('sign hash', certSubject, hash, $(activeTabSelector).attr('id'));
-        // cryptoPro.signData(certSubject, hash).then(function(signHash) {
         if (isHash()) {
           cryptoPro.signHash(certSubject, hash).then(function(signature) {
             $(activeTabSelector + signedSelector).text(signature);
-            updateSignature(signature);
+            updateSignature(signature, './download/data.xml.sig');
           });
         } else {
           cryptoPro.signData(certSubject, hash).then(function(signature) {
             $(activeTabSelector + signedSelector).text(signature);
-            updateSignature(signature);
+            updateSignature(signature, './download/data.xml.sig');
           });
         }
 
       });
+    });
+
+    $('#submit').click(function() {
+      sign('postForm.php', {data: $(this).closest('form').serialize()}, './download/form-data.xml.sig', true);
+    });
+
+    $('#submit-file').click(function() {
+      var form = $(this).closest('form')[0];
+      var formData = new FormData();
+      formData.append('file', $(this).closest('form').find('#file-upload')[0]);
+      // var formData = new FormData($(form));
+      console.log('file', form, formData, $(this).closest('form').find('#file-upload')[0]);
+      sign('postFile.php', formData, './download/form-file.sig', false);
     });
 
     getCerts();

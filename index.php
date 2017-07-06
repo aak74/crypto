@@ -28,6 +28,12 @@
 						<li>
 							<a href="#panel-file" data-toggle="tab">File</a>
 						</li>
+						<li>
+							<a href="#panel-form" data-toggle="tab">Form</a>
+						</li>
+						<li>
+							<a href="#panel-form-file" data-toggle="tab">Form File</a>
+						</li>
 					</ul>
 					<div class="tab-content">
 						<div role="tabpanel" class="tab-pane active" id="panel-hash">
@@ -35,6 +41,12 @@
 						</div>
 						<div role="tabpanel" class="tab-pane" id="panel-file">
 							<?include('./pages/file.php');?>
+						</div>
+						<div role="tabpanel" class="tab-pane" id="panel-form">
+							<?include('./pages/form.php');?>
+						</div>
+						<div role="tabpanel" class="tab-pane" id="panel-form-file">
+							<?include('./pages/formFile.php');?>
 						</div>
 					</div>
 				</div>
